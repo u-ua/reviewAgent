@@ -1,0 +1,66 @@
+[
+  {
+    "path": "src/server.ts",
+    "startLine": 11,
+    "type": "sql-concat",
+    "severity": "high",
+    "why": "用字符串拼接把 company 直接拼进 SQL，用户可控值可改变语句结构，造成 SQL 注入。",
+    "suggestion": "改用参数化查询 / PreparedStatement，变量作为参数传入。"
+  },
+  {
+    "path": "src/server.ts",
+    "startLine": 19,
+    "type": "reflected-input",
+    "severity": "medium",
+    "why": "req.query.name 未校验直接拼进响应体，可能造成反射型 XSS 或响应混淆。",
+    "suggestion": "对输出做 HTML 转义，或使用框架的自动转义模板。"
+  },
+  {
+    "path": "src/db.ts",
+    "startLine": 5,
+    "type": "hardcoded-secret",
+    "severity": "critical",
+    "why": "数据库连接凭据写死在源码里，会随代码泄露，且无法单独轮换。",
+    "suggestion": "移到环境变量或密钥管理系统，代码中只引用名称。"
+  },
+  {
+    "path": "src/db.ts",
+    "startLine": 16,
+    "type": "eval-usage",
+    "severity": "critical",
+    "why": "eval 把字符串当代码执行，输入不可信时可导致任意代码执行。",
+    "suggestion": "避免 eval，改用 JSON.parse 等安全解析方式。"
+  },
+  {
+    "path": "src/auth.ts",
+    "startLine": 11,
+    "type": "open-redirect",
+    "severity": "medium",
+    "why": "按 req.query.next 把请求重定向到外部地址，可用于钓鱼攻击。",
+    "suggestion": "只允许重定向到站内白名单地址。"
+  },
+  {
+    "path": "src/auth.ts",
+    "startLine": 19,
+    "type": "empty-catch",
+    "severity": "medium",
+    "why": "catch 块为空，异常被静默吞掉，会话恢复失败后逻辑可能在不正确的状态下继续。",
+    "suggestion": "至少记录日志，或回退到安全默认值。"
+  },
+  {
+    "path": "src/utils.ts",
+    "startLine": 4,
+    "type": "innerhtml-xss",
+    "severity": "high",
+    "why": "直接把 data 写进 innerHTML，内容含 HTML/脚本时会被执行，造成 XSS。",
+    "suggestion": "使用 textContent，或先经过 DOMPurify 等净化再写入。"
+  },
+  {
+    "path": "src/utils.ts",
+    "startLine": 12,
+    "type": "error-leak",
+    "severity": "medium",
+    "why": "把整个异常对象打进日志，可能暴露内部调用栈、路径、库版本等敏感信息。",
+    "suggestion": "记录异常 ID 与安全摘要，完整堆栈写入受限的日志存储。"
+  }
+]

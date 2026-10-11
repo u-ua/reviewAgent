@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "review-agent"
+version = "0.1.0"
+description = "证据驱动、权限隔离、过程可追溯的多 Agent 代码审查 Runtime（Python 版，stdlib 一对一迁移）"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "qdrant-client>=1.12,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+include = ["review_agent*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

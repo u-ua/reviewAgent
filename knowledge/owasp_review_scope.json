@@ -1,0 +1,19 @@
+{
+  "description": "OWASP Cheat Sheets selected for source-code security review retrieval.",
+  "files": [
+    "Authentication_Cheat_Sheet.md",
+    "Authorization_Cheat_Sheet.md",
+    "Cross_Site_Scripting_Prevention_Cheat_Sheet.md",
+    "Cryptographic_Storage_Cheat_Sheet.md",
+    "Deserialization_Cheat_Sheet.md",
+    "File_Upload_Cheat_Sheet.md",
+    "Input_Validation_Cheat_Sheet.md",
+    "Logging_Cheat_Sheet.md",
+    "OS_Command_Injection_Defense_Cheat_Sheet.md",
+    "Secrets_Management_Cheat_Sheet.md",
+    "Server_Side_Request_Forgery_Prevention_Cheat_Sheet.md",
+    "SQL_Injection_Prevention_Cheat_Sheet.md",
+    "Transport_Layer_Security_Cheat_Sheet.md",
+    "XML_External_Entity_Prevention_Cheat_Sheet.md"
+  ]
+}

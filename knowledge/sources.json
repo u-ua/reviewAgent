@@ -1,0 +1,29 @@
+{
+  "sources": [
+    {
+      "source_id": "local-review-rules",
+      "kind": "curated-json",
+      "path": "knowledge/review_rules.json",
+      "version": "1"
+    },
+    {
+      "source_id": "mitre-cwe",
+      "kind": "official-xml-zip",
+      "publisher": "MITRE",
+      "download_url": "https://cwe.mitre.org/data/xml/cwec_latest.xml.zip",
+      "documentation_url": "https://cwe.mitre.org/data/downloads.html",
+      "license_name": "CWE Terms of Use",
+      "license_url": "https://cwe.mitre.org/about/termsofuse.html",
+      "current_snapshot": "4.20"
+    },
+    {
+      "source_id": "owasp-cheatsheet-series",
+      "kind": "official-markdown",
+      "publisher": "OWASP Foundation",
+      "repository_url": "https://github.com/OWASP/CheatSheetSeries",
+      "license_name": "CC BY-SA 4.0",
+      "license_url": "https://github.com/OWASP/CheatSheetSeries/blob/master/LICENSE.md",
+      "current_snapshot": "8aaf426de610ea603c21cf6a75222a6b7a30f820"
+    }
+  ]
+}

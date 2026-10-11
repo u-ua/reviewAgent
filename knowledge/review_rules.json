@@ -1,0 +1,90 @@
+[
+  {
+    "rule_id": "CWE-89",
+    "title": "SQL 查询注入",
+    "text": "检查 SQL 查询是否通过字符串拼接、format 或模板字符串引入外部输入。外部输入必须通过参数化查询或 ORM 参数绑定传递，不能直接成为 SQL 语法的一部分。",
+    "languages": ["python", "javascript", "typescript"],
+    "category": "security",
+    "severity": "high",
+    "source": "CWE",
+    "source_url": "https://cwe.mitre.org/data/definitions/89.html",
+    "knowledge_version": "v1"
+  },
+  {
+    "rule_id": "CWE-79",
+    "title": "跨站脚本注入",
+    "text": "检查未可信数据是否未经上下文相关转义便写入 HTML、innerHTML 或响应正文。优先使用安全 DOM API、模板自动转义或经过验证的净化器。",
+    "languages": ["javascript", "typescript", "python"],
+    "category": "security",
+    "severity": "high",
+    "source": "CWE",
+    "source_url": "https://cwe.mitre.org/data/definitions/79.html",
+    "knowledge_version": "v1"
+  },
+  {
+    "rule_id": "CWE-798",
+    "title": "硬编码凭据",
+    "text": "检查源码是否包含数据库口令、API Key、访问令牌或其他硬编码认证信息。凭据应由密钥管理服务或运行环境注入，并避免进入日志和版本库。",
+    "languages": ["python", "javascript", "typescript", "java"],
+    "category": "security",
+    "severity": "critical",
+    "source": "CWE",
+    "source_url": "https://cwe.mitre.org/data/definitions/798.html",
+    "knowledge_version": "v1"
+  },
+  {
+    "rule_id": "CWE-95",
+    "title": "动态代码执行",
+    "text": "检查 eval、exec、Function 构造器等动态代码执行能力是否接收外部输入。应改用明确的数据解析、白名单分派或受限解释器。",
+    "languages": ["python", "javascript", "typescript"],
+    "category": "security",
+    "severity": "critical",
+    "source": "CWE",
+    "source_url": "https://cwe.mitre.org/data/definitions/95.html",
+    "knowledge_version": "v1"
+  },
+  {
+    "rule_id": "CWE-601",
+    "title": "开放重定向",
+    "text": "检查重定向目标是否直接来自请求参数。目标地址应限制为站内相对路径或经过可信域名白名单校验。",
+    "languages": ["python", "javascript", "typescript", "java"],
+    "category": "security",
+    "severity": "medium",
+    "source": "CWE",
+    "source_url": "https://cwe.mitre.org/data/definitions/601.html",
+    "knowledge_version": "v1"
+  },
+  {
+    "rule_id": "CWE-390",
+    "title": "忽略错误状态",
+    "text": "检查异常或错误返回是否被空 catch、空 except 或无条件忽略。错误应被处理、传播或以脱敏方式记录，并保持系统状态一致。",
+    "languages": ["python", "javascript", "typescript", "java"],
+    "category": "reliability",
+    "severity": "medium",
+    "source": "CWE",
+    "source_url": "https://cwe.mitre.org/data/definitions/390.html",
+    "knowledge_version": "v1"
+  },
+  {
+    "rule_id": "CWE-532",
+    "title": "日志泄露敏感信息",
+    "text": "检查异常对象、请求对象、认证头、令牌或用户隐私数据是否整体写入日志。日志应采用字段白名单并对敏感值脱敏。",
+    "languages": ["python", "javascript", "typescript", "java"],
+    "category": "security",
+    "severity": "medium",
+    "source": "CWE",
+    "source_url": "https://cwe.mitre.org/data/definitions/532.html",
+    "knowledge_version": "v1"
+  },
+  {
+    "rule_id": "PY-PATH-001",
+    "title": "文件路径必须限制在授权根目录",
+    "text": "处理用户提供的文件路径时，应进行真实路径解析并确认结果位于授权根目录内，同时拒绝绝对路径、父目录穿越和符号链接逃逸。",
+    "languages": ["python"],
+    "category": "authorization",
+    "severity": "high",
+    "source": "project",
+    "source_url": "",
+    "knowledge_version": "v1"
+  }
+]

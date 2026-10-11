@@ -1,0 +1,10 @@
+{
+  "description": "High-value CWE weaknesses suitable for source-code review retrieval.",
+  "groups": {
+    "injection": ["CWE-77", "CWE-78", "CWE-79", "CWE-89", "CWE-94", "CWE-95", "CWE-98", "CWE-113", "CWE-116", "CWE-117"],
+    "input_and_files": ["CWE-20", "CWE-22", "CWE-434", "CWE-611", "CWE-918"],
+    "authentication_and_authorization": ["CWE-287", "CWE-306", "CWE-352", "CWE-601", "CWE-732", "CWE-862", "CWE-863"],
+    "secrets_and_crypto": ["CWE-200", "CWE-209", "CWE-256", "CWE-259", "CWE-295", "CWE-311", "CWE-312", "CWE-319", "CWE-326", "CWE-327", "CWE-330", "CWE-347", "CWE-614", "CWE-798"],
+    "unsafe_runtime": ["CWE-119", "CWE-120", "CWE-125", "CWE-190", "CWE-400", "CWE-416", "CWE-502"]
+  }
+}

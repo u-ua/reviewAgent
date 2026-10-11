@@ -1,0 +1,24 @@
+dist/
+runs/
+.env
+*.tsbuildinfo
+.venv/
+*.egg-info/
+__pycache__/
+knowledge/raw/
+knowledge/normalized/
+.agents/
+.claude/
+.tmp/
+.pytest_cache/
+.venv-probe/
+nexamind/
+notes/
+
+# Personal learning and application materials are intentionally local-only.
+/Python迁移方案.md
+/面试学习Agent提示词.md
+/项目面试学习手册.md
+/校招下一步.md
+/校招分岗位优化.md
+/简历.md
