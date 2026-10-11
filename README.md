@@ -1,68 +1,68 @@
 # ReviewAgent
 
-> An evidence-driven, permission-scoped multi-agent runtime for code review.
+> 一个证据驱动、权限隔离、过程可追溯的多 Agent 代码审查 Runtime。
 
-ReviewAgent is a Python 3.11+ portfolio project that turns an LLM-assisted code review into an auditable workflow. It separates planning from execution, restricts each role to a small toolset, preserves code and rule evidence for every finding, and writes an append-only execution ledger that can be rendered into a report.
+ReviewAgent 是一个 Python 3.11+ 作品集项目。它把基于大模型的代码审查拆成可审计的工作流：Planner 负责规划任务图，Executor 在受限工具箱内读取代码和提交 Finding；每个 Finding 都要保留源码或规则证据，整个过程会写入可复盘的执行账本。
 
-## Why this project
+## 项目要解决的问题
 
-Most agent demos can produce a conclusion but cannot show **what the model read, why it was allowed to read it, or whether a reported line has supporting evidence**. ReviewAgent focuses on those engineering constraints:
+很多 Agent Demo 能给出“结论”，但说不清模型实际读了什么、为什么有权限读、报出的行号是否有证据支撑。本项目关注这些工程约束：
 
-- **Least-privilege roles**: the Planner can only submit task-graph commands; Executors receive read-only repository tools plus finding/result submission tools.
-- **Evidence gate**: a finding must cite a source artifact that covers its file and line range. Security findings in RAG mode additionally require rule evidence.
-- **Path safety**: every file tool checks the repository scope after real-path resolution and rejects absolute paths, traversal attempts, `.env`, and `.git` access.
-- **Auditable state**: tool calls and submissions are appended to `execution.jsonl`; reports and metrics are projections from that ledger.
-- **Dependency-aware execution**: the Controller atomically claims ready tasks and runs independent Executor tasks in a bounded thread pool (default: two), while Planner decisions stay serial.
+- **最小权限分工**：Planner 只能提交任务图命令；Executor 仅有只读代码工具，以及 Finding/任务结果提交工具。
+- **行号证据门卫**：Finding 必须引用覆盖对应文件和行号范围的源码 Artifact；启用 RAG 时，安全类 Finding 还必须提供规则证据。
+- **路径安全**：所有文件工具在 realpath 解析后校验仓库范围，拒绝绝对路径、`..`、`.env` 与 `.git`。
+- **可审计状态**：工具调用和提交记录追加到 `execution.jsonl`；报告与指标均从该账本投影生成。
+- **依赖感知的有限并发**：Controller 原子领取已就绪任务，并用默认大小为 2 的线程池运行相互独立的 Executor；Planner 决策始终串行。
 
-## Architecture
+## 架构
 
 ```text
 CLI
  └─ ReviewController
-     ├─ Planner: planner_submit → validates and updates the task graph
-     ├─ TaskStore: atomically claims dependency-ready tasks as running
-     └─ Executor pool: read-only tools / finding_write / task_result_submit
-          ├─ ArtifactStore: content-addressed code and rule evidence (SHA-256)
-          ├─ FindingStore + evidence validation
-          └─ ExecutionLog: append-only execution.jsonl
+     ├─ Planner：planner_submit → 校验并更新任务图
+     ├─ TaskStore：原子领取依赖已满足的任务，并标记为 running
+     └─ Executor 线程池：只读工具 / finding_write / task_result_submit
+          ├─ ArtifactStore：以 SHA-256 内容寻址保存源码、规则证据
+          ├─ FindingStore：校验证据与行号范围
+          └─ ExecutionLog：追加式 execution.jsonl
 
-Optional RAG path: rule query → Dense retrieval + BM25 → reciprocal-rank fusion → rule evidence artifact
+可选 RAG：规则查询 → 向量检索 + BM25 → RRF 融合 → 规则证据 Artifact
 ```
 
-## Stack
+## 技术栈
 
-- Python 3.11+, standard-library `urllib` for OpenAI-compatible LLM calls
-- Qdrant client for vector retrieval; handwritten BM25 and reciprocal-rank fusion
-- pytest for runtime, evidence-gate, retrieval, report, and local-workbench tests
-- No orchestration framework: tool schemas, validation, retries, and persisted state are explicit in the codebase
+- Python 3.11+；使用标准库 `urllib` 调用 OpenAI 兼容模型接口
+- Qdrant Client 负责向量检索；手写 BM25 与 RRF（倒数排名融合）
+- pytest 覆盖 Runtime、证据门卫、检索、报告与本地工作台
+- 不依赖 Agent 编排框架：工具 Schema、业务校验、重试和状态持久化均在代码中显式实现
 
-## Quick start
+## 快速开始
 
 ```bash
-# Create a virtual environment, then install the project and development dependencies.
+# 创建虚拟环境并安装项目与开发依赖
 python -m venv .venv
 .venv\Scripts\python -m pip install -e ".[dev]"
 
-# Run the automated tests.
+# 运行自动化测试
 .venv\Scripts\python -m pytest -q --basetemp .tmp/pytest
 
-# Run the deterministic local demo (no API key required).
+# 跑离线、可复现的演示仓库；不需要 API Key
 .venv\Scripts\python -m review_agent --repo fixtures/demo-repo --scope src \
-  --goal "Review the demo repository for code-quality and security issues" \
+  --goal "审查演示仓库中的代码质量与安全问题" \
   --provider fake --max-cycles 6 --cases fixtures/cases.json
 
-# Generate a read-only report from a completed run.
+# 根据一次已完成的运行生成只读审计报告
 .venv\Scripts\python scripts/generate_report.py runs/<session-id>
 
-# Browse local run reports (binds to localhost only).
+# 浏览本地运行报告，仅监听 localhost
 .venv\Scripts\python -m review_agent.web
 ```
 
-The fake provider exists to make the fixture workflow reproducible; its fixture score is **not** a claim about real-model performance. To use a compatible model, copy `.env.example` to a local `.env`, set the LLM variables, and select `--provider openai`.
+本次发布已在项目内临时目录验证 `76 passed`；离线 fake provider 在预设的 8 个案例中完成 8/8 命中。该 provider 只用于保证演示流程可复现，**不代表真实模型效果**。如需连接兼容模型，将 `.env.example` 复制为本地 `.env`，配置变量后使用 `--provider openai`。
 
-## Retrieval and knowledge sources
+## RAG 与知识源
 
-The repository contains curated rule definitions and evaluation cases. Raw CWE and OWASP source snapshots, normalized outputs, Qdrant collections, API keys, and run artifacts stay local. Rebuild them explicitly when needed:
+仓库只保留规则定义、来源元数据和评测案例；原始 CWE/OWASP 快照、归一化结果、Qdrant 数据、密钥和运行产物均留在本地。需要时可显式重建：
 
 ```bash
 .venv\Scripts\python scripts/download_cwe.py
@@ -72,22 +72,22 @@ The repository contains curated rule definitions and evaluation cases. Raw CWE a
 .venv\Scripts\python scripts/index_rules.py
 ```
 
-See [knowledge/README.md](knowledge/README.md) for source attribution, ingestion boundaries, and retrieval-evaluation format.
+知识源归属、导入边界和检索评测格式见 [knowledge/README.md](knowledge/README.md)。
 
-## Project layout
+## 目录结构
 
 ```text
-review_agent/       Runtime: controller, roles, tools, stores, RAG, and localhost workbench
-fixtures/           Deterministic demo repository and expected findings
-knowledge/          Curated rule metadata, source manifests, and evaluation cases
-scripts/            Evaluation, report generation, indexing, and source-ingestion utilities
-tests/              Automated regression tests
+review_agent/       Runtime：Controller、角色、工具、存储、RAG 与本地工作台
+fixtures/           可复现的演示仓库与预期 Finding
+knowledge/          规则元数据、来源清单与评测案例
+scripts/            评测、报告、索引及知识源导入脚本
+tests/              自动化回归测试
 ```
 
-## Scope and limitations
+## 当前边界
 
-This is a local runtime, not a hosted code-review service. It does not post GitHub pull-request comments, execute untrusted code in a sandbox, or provide distributed scheduling/recovery. The bounded Executor pool overlaps independent I/O-bound work in one process; it is not distributed execution.
+这是本地 Runtime，不是托管式代码审查服务：目前不包含 GitHub PR 评论、执行不可信代码的沙箱、分布式调度或故障恢复。有限线程池仅在单进程中重叠独立的 I/O 等待，不等同于分布式执行。
 
-## License
+## 许可证
 
-MIT. See [LICENSE](LICENSE).
+MIT，见 [LICENSE](LICENSE)。
